@@ -3,8 +3,13 @@ const helmet = require("helmet");
 const cors = require("cors");
 const dotenv = require("dotenv");
 
+const authRoutes = require("./routes/auth");
+const usersRoutes = require("./routes/users");
+const contactsRoutes = require("./routes/contacts");
+
 const mongoose = require("mongoose");
 
+// load environment variables
 dotenv.config();
 
 if (!process.env.PORT) {
@@ -17,9 +22,16 @@ const url = `mongodb+srv://${process.env.DATABASE_USER}:${process.env.DATABASE_P
 
 const app = express();
 
+// middleware
 app.use(cors());
 app.use(helmet());
 
+// register routes
+app.use("/api/auth", authRoutes);
+app.use("/api/users", usersRoutes);
+app.use("/api/contacts", contactsRoutes);
+
+// connect
 const connectDB = async () => {
   try {
     await mongoose.connect(url, {

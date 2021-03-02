@@ -2,6 +2,7 @@ const express = require("express");
 const { check } = require("express-validator");
 
 const authController = require("../controllers/auth");
+const { isAuth } = require("../middleware/is-auth");
 
 const router = express.Router();
 
@@ -20,6 +21,6 @@ router.post(
 // @route   GET api/auth
 // @desc    get logged in user
 // @access  Private
-router.get("/");
+router.get("/", isAuth, authController.getUser);
 
 module.exports = router;

@@ -1,6 +1,7 @@
 const { validationResult } = require("express-validator");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const mongoose = require("mongoose");
 
 const User = require("../models/user");
 
@@ -34,6 +35,22 @@ exports.login = async (req, res, next) => {
     });
     // return token payload
     return res.status(200).json({ token });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: "server error" });
+  }
+};
+
+// @desc    get logged in user
+exports.getUser = async (req, res, next) => {
+  // get the user id from the request
+  const userId = mongoose.Types.ObjectId(req.userId);
+
+  try {
+    // find the user in the database
+    const user = await User.findById(userId);
+    // return user
+    return res.status(200).json(user);
   } catch (err) {
     console.log(err);
     return res.status(500).json({ message: "server error" });

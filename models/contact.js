@@ -6,7 +6,6 @@ const contactSchema = new Schema(
   {
     firstName: {
       type: String,
-      required: true,
     },
     lastName: {
       type: String,
@@ -16,7 +15,6 @@ const contactSchema = new Schema(
     },
     email: {
       type: String,
-      required: true,
     },
     creator: {
       type: Schema.Types.ObjectId,

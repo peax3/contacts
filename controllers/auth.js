@@ -10,7 +10,7 @@ exports.login = async (req, res, next) => {
   // check for validation console error
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).send({ error: errors.array() });
+    return res.status(422).json({ error: errors.array() });
   }
 
   const { email, password } = req.body;
@@ -21,12 +21,12 @@ exports.login = async (req, res, next) => {
     if (!user) {
       return res
         .status(401)
-        .send({ message: "A User with this email could not be found" });
+        .json({ message: "A User with this email could not be found" });
     }
     // check if password is correct
     const isEqual = await bcrypt.compare(password, user.password);
     if (!isEqual) {
-      return res.status(401).send({ message: "Wrong Password" });
+      return res.status(401).json({ message: "Wrong Password" });
     }
     // generate token
     const token = jwt.sign({ userId: user._id }, process.env.TOKEN_SECRET, {
@@ -36,6 +36,6 @@ exports.login = async (req, res, next) => {
     return res.status(200).json({ token });
   } catch (err) {
     console.log(err);
-    return res.status(500).send("server error");
+    return res.status(500).json({ message: "server error" });
   }
 };

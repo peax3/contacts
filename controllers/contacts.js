@@ -10,7 +10,7 @@ exports.getContacts = async (req, res) => {
   // retrieve id from req
   const userId = Types.ObjectId(req.userId);
   try {
-    // get contacts from database
+    // get contacts from database and sort
     const contacts = await contact
       .find({ creator: userId })
       .collation({ locale: "en", strength: 2 })
@@ -29,6 +29,7 @@ exports.getContacts = async (req, res) => {
 exports.addContact = async (req, res) => {
   // retrieve id from req
   const userId = Types.ObjectId(req.userId);
+  console.log(userId);
 
   const { firstName, lastName, email, phone } = req.body;
 
@@ -66,6 +67,52 @@ exports.addContact = async (req, res) => {
 
     // return payload
     return res.status(201).json({ contact, message: "contact created" });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: "server error" });
+  }
+};
+
+exports.updateContact = async (req, res) => {
+  const userId = Types.ObjectId(req.userId);
+  console.log(userId);
+  const contactId = Types.ObjectId(req.params.contactId);
+
+  const { firstName, lastName, email, phone } = req.body;
+
+  // if firstName and lastName undefined - error
+  if (!firstName && !lastName) {
+    return res.status(422).json({
+      message:
+        "first name and last name cannot be empty. Please fill one or both fields",
+    });
+  }
+  // if phone and email undefined - error
+  if (!email && !phone) {
+    return res.status(422).json({
+      message:
+        "phone and email cannot be empty. Please enter fill one or both fields",
+    });
+  }
+
+  try {
+    const contactToUpdate = await Contact.findById(contactId);
+    const sample = contactToUpdate.creator.toString() !== userId.toString();
+
+    if (contactToUpdate.creator.toString() !== userId.toString()) {
+      return res.status(403).json({ message: "Not Authorised" });
+    }
+
+    contactToUpdate.firstName = firstName;
+    contactToUpdate.lastName = lastName;
+    contactToUpdate.phone = phone;
+    contactToUpdate.email = email;
+
+    const updatedContact = await contactToUpdate.save();
+
+    return res
+      .status(200)
+      .json({ message: "contact updated", contact: updatedContact });
   } catch (err) {
     console.log(err);
     return res.status(500).json({ message: "server error" });

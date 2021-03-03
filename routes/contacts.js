@@ -19,7 +19,7 @@ router.post("/", isAuth, contactController.addContact);
 // @route   PUT api/contacts/:id
 // @desc    edit a contact
 // @access  Private
-router.put("/:contactId");
+router.put("/:contactId", isAuth, contactController.updateContact);
 
 // @route   DELETE api/contacts/:id
 // @desc    delete a contact

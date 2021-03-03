@@ -2,6 +2,7 @@ const { Types } = require("mongoose");
 const contact = require("../models/contact");
 
 const Contact = require("../models/contact");
+const { findById } = require("../models/user");
 const User = require("../models/user");
 
 // @desc    Get all contacts
@@ -75,7 +76,6 @@ exports.addContact = async (req, res) => {
 
 exports.updateContact = async (req, res) => {
   const userId = Types.ObjectId(req.userId);
-  console.log(userId);
   const contactId = Types.ObjectId(req.params.contactId);
 
   const { firstName, lastName, email, phone } = req.body;
@@ -97,7 +97,6 @@ exports.updateContact = async (req, res) => {
 
   try {
     const contactToUpdate = await Contact.findById(contactId);
-    const sample = contactToUpdate.creator.toString() !== userId.toString();
 
     if (contactToUpdate.creator.toString() !== userId.toString()) {
       return res.status(403).json({ message: "Not Authorised" });
@@ -113,6 +112,32 @@ exports.updateContact = async (req, res) => {
     return res
       .status(200)
       .json({ message: "contact updated", contact: updatedContact });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: "server error" });
+  }
+};
+
+exports.deleteContact = async (req, res) => {
+  const userId = Types.ObjectId(req.userId);
+  const contactId = Types.ObjectId(req.params.contactId);
+
+  try {
+    const contactTodelete = await Contact.findById(contactId);
+    const user = await User.findById(userId);
+
+    if (contactTodelete.creator.toString() !== userId.toString()) {
+      return res.status(403).json({ message: "Not Authorised" });
+    }
+
+    // remove the contact id from the user and save
+    user.contacts.pull(contactId);
+    await user.save();
+
+    // delete
+    await contactTodelete.remove();
+
+    return res.status(200).json({ message: "contact deleted" });
   } catch (err) {
     console.log(err);
     return res.status(500).json({ message: "server error" });

@@ -24,6 +24,6 @@ router.put("/:contactId", isAuth, contactController.updateContact);
 // @route   DELETE api/contacts/:id
 // @desc    delete a contact
 // @access  Private
-router.delete("/:contactId");
+router.delete("/:contactId", isAuth, contactController.deleteContact);
 
 module.exports = router;

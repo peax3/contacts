@@ -9,13 +9,22 @@ const User = require("../models/user");
 exports.getContacts = async (req, res) => {
   // retrieve id from req
   const userId = Types.ObjectId(req.userId);
-  // get contacts from database
-  const contacts = await contact.find({ user: userId });
+  try {
+    // get contacts from database
+    const contacts = await contact
+      .find({ creator: userId })
+      .collation({ locale: "en", strength: 2 })
+      .sort({ firstName: 1 });
 
-  // return payload
+    // return payload
+    res.status(200).json(contacts);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: "server error" });
+  }
 };
 
-// @desc    create a post
+// @desc    create a contact
 // @access  Private
 exports.addContact = async (req, res) => {
   // retrieve id from req

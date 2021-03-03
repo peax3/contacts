@@ -9,20 +9,20 @@ const router = express.Router();
 // @route   GET api/contacts
 // @desc    Get all contacts
 // @access  Private
-router.get("/", isAuth);
+router.get("/", isAuth, contactController.getContacts);
 
 // @route   POST api/contacts
-// @desc    create a post
+// @desc    create a contact
 // @access  Private
 router.post("/", isAuth, contactController.addContact);
 
 // @route   PUT api/contacts/:id
-// @desc    edit a post
+// @desc    edit a contact
 // @access  Private
 router.put("/:contactId");
 
 // @route   DELETE api/contacts/:id
-// @desc    delete a post
+// @desc    delete a contact
 // @access  Private
 router.delete("/:contactId");
 

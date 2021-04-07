@@ -56,3 +56,34 @@ exports.getUser = async (req, res, next) => {
     return res.status(500).json({ message: "server error" });
   }
 };
+
+// @desc    Register a new user: Signup user
+// @access  Public
+exports.signup = async (req, res, next) => {
+  // validate input
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+
+  const { fullName, email, password } = req.body;
+
+  try {
+    // check if a user with the email exists
+    let user = await User.findOne({ email });
+    if (user) {
+      return res
+        .status(422)
+        .json({ message: "A user with this email already exists" });
+    }
+
+    // save user
+    const result = await user.save();
+
+    // return payload
+    res.status(201).json({ message: "User created", userId: result._id });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: "server error" });
+  }
+};

@@ -10,6 +10,9 @@ const contactSchema = new Schema(
     lastName: {
       type: String,
     },
+    fullName: {
+      type: String,
+    },
     phone: {
       type: String,
     },
@@ -24,5 +27,9 @@ const contactSchema = new Schema(
   },
   { timestamps: true }
 );
+
+contactSchema.pre("save", function () {
+  this.fullName = `${this.firstName} ${this.lastName}`.trim();
+});
 
 module.exports = mongoose.model("Contact", contactSchema);

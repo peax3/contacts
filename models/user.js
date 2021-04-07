@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const bcrypt = require("bcrypt");
 
 const userSchema = new Schema({
   fullName: {
@@ -13,6 +14,7 @@ const userSchema = new Schema({
   password: {
     type: String,
     required: true,
+    select: false,
   },
   contacts: [
     {
@@ -20,6 +22,11 @@ const userSchema = new Schema({
       ref: "Contact",
     },
   ],
+});
+
+userSchema.pre("save", async function () {
+  const hashedPassword = await bcrypt.hash(this.password, 12);
+  this.password = hashedPassword;
 });
 
 module.exports = mongoose.model("User", userSchema);

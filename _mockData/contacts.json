@@ -1,0 +1,111 @@
+[
+  {
+    "firstName": "Justin",
+    "lastName": "Bieber",
+    "phone": "11122233345",
+    "email": "justinbeiber@gmail.con",
+    "creator": "5d7a514b5d2c12c7449be045"
+  },
+  {
+    "firstName": "Lady",
+    "lastName": "Gaga",
+    "phone": "77744556765",
+    "email": "ladygaga@gmail.con",
+    "creator": "5d7a514b5d2c12c7449be045"
+  },
+  {
+    "firstName": "Katty",
+    "lastName": "Perry",
+    "phone": "0303452987724",
+    "email": "kattyperry@gmail.con",
+    "creator": "5d7a514b5d2c12c7449be045"
+  },
+  {
+    "firstName": "Britney",
+    "lastName": "Spears",
+    "phone": "123445556",
+    "email": "britneyspears@gmail.con",
+    "creator": "5d7a514b5d2c12c7449be045"
+  },
+
+  {
+    "firstName": "Jennifer",
+    "lastName": "Lopez",
+    "phone": "11122233345",
+    "email": "jenniferlopez@gmail.con",
+    "creator": "5d7a514b5d2c12c7449be046"
+  },
+  {
+    "firstName": "Nicki",
+    "lastName": "minaj",
+    "phone": "77744556765",
+    "email": "nickiminaj@gmail.con",
+    "creator": "5d7a514b5d2c12c7449be046"
+  },
+  {
+    "firstName": "Selena",
+    "lastName": "Gomez",
+    "phone": "0303452987724",
+    "email": "selenagomez@gmail.con",
+    "creator": "5d7a514b5d2c12c7449be046"
+  },
+  {
+    "firstName": "Alicia",
+    "lastName": "keys",
+    "phone": "123445556",
+    "email": "aliciakeys@gmail.con",
+    "creator": "5d7a514b5d2c12c7449be046"
+  },
+
+  {
+    "firstName": "Harry",
+    "lastName": "Styles",
+    "phone": "0303452987724",
+    "email": "harrystyles@gmail.con",
+    "creator": "5c8a1d5b0190b214360dc031"
+  },
+  {
+    "firstName": "Miley",
+    "lastName": "cyrus",
+    "phone": "123445556",
+    "email": "mileycyrus@gmail.con",
+    "creator": "5c8a1d5b0190b214360dc031"
+  },
+
+  {
+    "firstName": "One",
+    "lastName": "Direction",
+    "phone": "0303452987724",
+    "email": "onedirection@gmail.con",
+    "creator": "5c8a1d5b0190b214360dc032"
+  },
+  {
+    "firstName": "Lil",
+    "lastName": "Wayne",
+    "phone": "123445556",
+    "email": "lilwayne@gmail.con",
+    "creator": "5c8a1d5b0190b214360dc032"
+  },
+
+  {
+    "firstName": "mariah",
+    "lastName": "carey",
+    "phone": "0303452987724",
+    "email": "mariahcarey@gmail.con",
+    "creator": "5c8a1d5b0190b214360dc033"
+  },
+  {
+    "firstName": "Cold",
+    "lastName": "Play",
+    "phone": "123445556",
+    "email": "coldplay@gmail.con",
+    "creator": "5c8a1d5b0190b214360dc033"
+  },
+  {
+    "firstName": "Zayn",
+    "lastName": "Malik",
+    "phone": "123445556",
+    "email": "zaynmalik@gmail.con",
+    "creator": "5c8a1d5b0190b214360dc033"
+  }
+]

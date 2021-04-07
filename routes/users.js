@@ -9,7 +9,7 @@ const router = express.Router();
 // @desc    Register a new user: Signup user
 // @access  Public
 router.post(
-  "/",
+  "/register",
   [
     check("fullName")
       .trim()

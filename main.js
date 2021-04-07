@@ -29,7 +29,6 @@ app.use(express.json());
 
 // register routes
 app.use("/api/auth", authRoutes);
-app.use("/api/users", usersRoutes);
 app.use("/api/contacts", contactsRoutes);
 
 // connect

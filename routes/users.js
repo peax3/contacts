@@ -20,8 +20,8 @@ router.post(
       .withMessage("Please enter a valid email")
       .normalizeEmail(),
     check("password")
-      .isLength({ min: 8 })
-      .withMessage("Password must be more than eight(8) characters"),
+      .isLength({ min: 6 })
+      .withMessage("Password must be more than six(6) characters"),
   ],
   usersController.signup
 );

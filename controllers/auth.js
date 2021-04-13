@@ -18,16 +18,15 @@ exports.login = async (req, res, next) => {
 
   try {
     // find user with email
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).select("+password");
     if (!user) {
-      return res
-        .status(401)
-        .json({ message: "A User with this email could not be found" });
+      return res.status(401).json({ message: "Invalid credentials" });
     }
+
     // check if password is correct
     const isEqual = await bcrypt.compare(password, user.password);
     if (!isEqual) {
-      return res.status(401).json({ message: "Wrong Password" });
+      return res.status(401).json({ message: "Invalid credentails" });
     }
     // generate token
     const token = jwt.sign({ userId: user._id }, process.env.TOKEN_SECRET, {
@@ -78,10 +77,17 @@ exports.signup = async (req, res, next) => {
     }
 
     // save user
-    const result = await user.save();
+    const newUser = await User.create(req.body);
+
+    // generate token
+    const token = jwt.sign({ userId: newUser._id }, process.env.TOKEN_SECRET, {
+      expiresIn: process.env.TOKEN_EXPIRY,
+    });
 
     // return payload
-    res.status(201).json({ message: "User created", userId: result._id });
+    res
+      .status(201)
+      .json({ message: "User created", token: token, userId: newUser._id });
   } catch (err) {
     console.log(err);
     return res.status(500).json({ message: "server error" });

@@ -12,7 +12,10 @@ const router = express.Router();
 router.post(
   "/login",
   [
-    check("email").isEmail().withMessage("Please enter a valid email"),
+    check("email")
+      .isEmail()
+      .withMessage("Please enter a valid email")
+      .normalizeEmail(),
     check("password").notEmpty().withMessage("Password is required"),
   ],
   authController.login

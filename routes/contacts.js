@@ -1,10 +1,12 @@
 const express = require("express");
-const { check } = require("express-validator");
+const multer = require("multer");
 const { isAuth } = require("../middleware/is-auth");
 
 const contactController = require("../controllers/contacts");
 
 const router = express.Router();
+
+const fileUpload = multer(); // file upload
 
 // @route   GET api/contacts
 // @desc    Get all contacts
@@ -14,7 +16,12 @@ router.get("/", isAuth, contactController.getContacts);
 // @route   POST api/contacts
 // @desc    create a contact
 // @access  Private
-router.post("/", isAuth, contactController.addContact);
+router.post(
+  "/",
+  isAuth,
+  fileUpload.single("image"),
+  contactController.addContact
+);
 
 // @route   PUT api/contacts/:id
 // @desc    edit a contact

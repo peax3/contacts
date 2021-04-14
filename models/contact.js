@@ -19,6 +19,10 @@ const contactSchema = new Schema(
     email: {
       type: String,
     },
+    image: {
+      imageUrl: String,
+      imageId: String,
+    },
     creator: {
       type: Schema.Types.ObjectId,
       ref: "User",

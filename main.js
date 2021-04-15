@@ -40,6 +40,8 @@ const connectDB = async () => {
   try {
     await mongoose.connect(url, {
       useNewUrlParser: true,
+      useFindAndModify: false,
+      useCreateIndex: true,
       useUnifiedTopology: true,
     });
     app.listen(PORT, () => {

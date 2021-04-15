@@ -3,7 +3,8 @@ const { Types } = require("mongoose");
 const Contact = require("../models/contact");
 const User = require("../models/user");
 const ErrorResponse = require("../utils/errorResponse");
-const uploadImage = require("../utils/uploadImage");
+const { uploadImage } = require("../utils/uploadImage");
+const { deleteImage } = require("../utils/uploadImage");
 
 // @desc    Get all contacts
 // @access  Private
@@ -87,6 +88,8 @@ exports.addContact = async (req, res, next) => {
   }
 };
 
+// @desc    update a contact
+// @access  Private
 exports.updateContact = async (req, res, next) => {
   const userId = Types.ObjectId(req.userId);
   const contactId = Types.ObjectId(req.params.contactId);
@@ -114,17 +117,42 @@ exports.updateContact = async (req, res, next) => {
 
   try {
     const contactToUpdate = await Contact.findById(contactId);
-
+    // check if the user is the creator of contacT
     if (contactToUpdate.creator.toString() !== userId.toString()) {
       return next(new ErrorResponse("Not Authorised", 403));
     }
+    // check if contact exist
+    if (!contactToUpdate) {
+      return next(new ErrorResponse("Contact not found", 404));
+    }
 
-    contactToUpdate.firstName = firstName;
-    contactToUpdate.lastName = lastName;
-    contactToUpdate.phone = phone;
-    contactToUpdate.email = email;
+    let contact = {
+      firstName,
+      lastName,
+      phone,
+      email,
+    };
 
-    const updatedContact = await contactToUpdate.save();
+    if (req.file) {
+      try {
+        // delete previous image
+        const deleted = await deleteImage(contactToUpdate.image["imageId"]);
+        // upload new Image
+        const uploadedImage = await uploadImage(req.file);
+        const { secure_url, public_id } = uploadedImage;
+        const image = {
+          imageUrl: secure_url,
+          imageId: public_id,
+        };
+        contact = { ...contact, image }; // add image details to new contact
+      } catch (err) {
+        return next(new ErrorResponse(err.message, 400));
+      }
+    }
+
+    const updatedContact = await Contact.findByIdAndUpdate(contactId, contact, {
+      new: true,
+    });
 
     return res
       .status(200)
@@ -134,6 +162,8 @@ exports.updateContact = async (req, res, next) => {
   }
 };
 
+// @desc    delete a contact
+// @access  Private
 exports.deleteContact = async (req, res, next) => {
   const userId = Types.ObjectId(req.userId);
   const contactId = Types.ObjectId(req.params.contactId);
@@ -146,10 +176,17 @@ exports.deleteContact = async (req, res, next) => {
       return next(new ErrorResponse("Not Authorized"), 403);
     }
 
+    // check if contact exist
+    if (!contactTodelete) {
+      return next(new ErrorResponse("Contact not found", 404));
+    }
+
     // remove the contact id from the user and save
     user.contacts.pull(contactId);
     await user.save();
 
+    // delete image from cloud
+    await deleteImage(contactTodelete.image["imageId"]);
     // delete
     await contactTodelete.remove();
 

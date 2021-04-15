@@ -48,4 +48,11 @@ async function uploadImage(file) {
   return streamUpload(file.buffer, file.name);
 }
 
-module.exports = uploadImage;
+async function deleteImage(publicId) {
+  return cloudinary.api.delete_resources(publicId);
+}
+
+module.exports = {
+  uploadImage,
+  deleteImage,
+};

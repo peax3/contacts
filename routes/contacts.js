@@ -26,7 +26,12 @@ router.post(
 // @route   PUT api/contacts/:id
 // @desc    edit a contact
 // @access  Private
-router.put("/:contactId", isAuth, contactController.updateContact);
+router.put(
+  "/:contactId",
+  isAuth,
+  fileUpload.single("image"),
+  contactController.updateContact
+);
 
 // @route   DELETE api/contacts/:id
 // @desc    delete a contact

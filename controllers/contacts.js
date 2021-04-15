@@ -3,8 +3,8 @@ const { Types } = require("mongoose");
 const Contact = require("../models/contact");
 const User = require("../models/user");
 const ErrorResponse = require("../utils/errorResponse");
-const { uploadImage } = require("../utils/uploadImage");
-const { deleteImage } = require("../utils/uploadImage");
+const { uploadImage } = require("../utils/cloudinary");
+const { deleteImage } = require("../utils/cloudinary");
 
 // @desc    Get all contacts
 // @access  Private

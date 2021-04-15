@@ -36,7 +36,7 @@ exports.login = async (req, res, next) => {
     // return token payload
     return res.status(200).json({ token });
   } catch (err) {
-    return next(err);
+    return next();
   }
 };
 
@@ -51,7 +51,7 @@ exports.getUser = async (req, res, next) => {
     // return user
     return res.status(200).json(user);
   } catch (err) {
-    return next(err);
+    return next();
   }
 };
 
@@ -70,9 +70,10 @@ exports.signup = async (req, res, next) => {
     // check if a user with the email exists
     let user = await User.findOne({ email });
     if (user) {
-      return res
-        .status(422)
-        .json({ message: "A user with this email already exists" });
+      return next(
+        new ErrorResponse("A user with this email already exists"),
+        422
+      );
     }
 
     // save user
@@ -88,7 +89,6 @@ exports.signup = async (req, res, next) => {
       .status(201)
       .json({ message: "User created", token: token, userId: newUser._id });
   } catch (err) {
-    console.log(err);
-    return res.status(500).json({ message: "server error" });
+    next();
   }
 };

@@ -1,10 +1,9 @@
 const { Types } = require("mongoose");
-const contact = require("../models/contact");
 
 const Contact = require("../models/contact");
-const { findById } = require("../models/user");
 const User = require("../models/user");
 const ErrorResponse = require("../utils/errorResponse");
+const uploadImage = require("../utils/uploadImage");
 
 // @desc    Get all contacts
 // @access  Private
@@ -13,70 +12,80 @@ exports.getContacts = async (req, res, next) => {
   const userId = Types.ObjectId(req.userId);
   try {
     // get contacts from database and sort
-    const contacts = await contact
-      .find({ creator: userId })
+    const contacts = await Contact.find({ creator: userId })
       .collation({ locale: "en", strength: 2 })
       .sort({ firstName: 1 });
 
     // return payload
     res.status(200).json(contacts);
   } catch (err) {
-    return next(err);
+    return next();
   }
-};
-
-exports.addContact = async (req, res, next) => {
-  return next(new ErrorResponse("custom", 400));
 };
 
 // @desc    create a contact
 // @access  Private
-// exports.addContact = async (req, res) => {
-//   // retrieve id from req
-//   const userId = Types.ObjectId(req.userId);
-//   console.log(userId);
+exports.addContact = async (req, res, next) => {
+  // retrieve id from req
+  const userId = req.userId;
+  const { firstName, lastName, email, phone } = req.body;
 
-//   const { firstName, lastName, email, phone } = req.body;
+  // if firstName and lastName undefined - error
+  if (!firstName && !lastName) {
+    return next(
+      new ErrorResponse(
+        "First and Last name cannot be empty. Please fill one or both fields",
+        422
+      )
+    );
+  }
+  // if phone and email undefined - error
+  if (!firstName && !lastName) {
+    return next(
+      new ErrorResponse(
+        "Phone and Email cannot be empty. Please enter fill one or both fields",
+        422
+      )
+    );
+  }
 
-//   // if firstName and lastName undefined - error
-//   if (!firstName && !lastName) {
-//     return res.status(422).json({
-//       message:
-//         "first name and last name cannot be empty. Please fill one or both fields",
-//     });
-//   }
-//   // if phone and email undefined - error
-//   if (!email && !phone) {
-//     return res.status(422).json({
-//       message:
-//         "phone and email cannot be empty. Please enter fill one or both fields",
-//     });
-//   }
+  let newContact = {
+    firstName,
+    lastName,
+    email,
+    phone,
+    creator: userId,
+  };
 
-//   try {
-//     // create new contact and save
-//     const newContact = new Contact({
-//       firstName,
-//       lastName,
-//       phone,
-//       email,
-//       creator: userId,
-//     });
+  if (req.file) {
+    try {
+      const uploadedImage = await uploadImage(req.file);
+      const { secure_url, public_id } = uploadedImage;
+      const image = {
+        imageUrl: secure_url,
+        imageId: public_id,
+      };
+      newContact = { ...newContact, image }; // add image details to new contact
+    } catch (err) {
+      return next(new ErrorResponse(err.message, 400));
+    }
+  }
 
-//     const contact = await newContact.save();
+  try {
+    const savedContact = await Contact.create(newContact);
 
-//     // find user. update it and save
-//     const user = await User.findById(userId);
-//     user.contacts.push(contact._id);
-//     await user.save();
+    // find user. update it and save
+    const user = await User.findById(userId);
+    user.contacts.push(savedContact._id);
+    await user.save();
 
-//     // return payload
-//     return res.status(201).json({ contact, message: "contact created" });
-//   } catch (err) {
-//     console.log(err);
-//     return res.status(500).json({ message: "server error" });
-//   }
-// };
+    return res
+      .status(201)
+      .json({ contact: savedContact, message: "contact created" });
+  } catch (err) {
+    return next();
+  }
+};
 
 exports.updateContact = async (req, res, next) => {
   const userId = Types.ObjectId(req.userId);
@@ -121,7 +130,7 @@ exports.updateContact = async (req, res, next) => {
       .status(200)
       .json({ message: "contact updated", contact: updatedContact });
   } catch (err) {
-    return next(err);
+    return next();
   }
 };
 
@@ -146,6 +155,6 @@ exports.deleteContact = async (req, res, next) => {
 
     return res.status(200).json({ message: "contact deleted" });
   } catch (err) {
-    return next(err);
+    return next();
   }
 };

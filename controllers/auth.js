@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 
 const User = require("../models/user");
+const ErrorResponse = require("../utils/errorResponse");
 
 // @desc    login in user: authenticate user and return token
 // @access  Public
@@ -20,13 +21,13 @@ exports.login = async (req, res, next) => {
     // find user with email
     const user = await User.findOne({ email }).select("+password");
     if (!user) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      return next(new ErrorResponse("Invalid credentials", 401));
     }
 
     // check if password is correct
     const isEqual = await bcrypt.compare(password, user.password);
     if (!isEqual) {
-      return res.status(401).json({ message: "Invalid credentails" });
+      return next(new ErrorResponse("Invalid credentials", 401));
     }
     // generate token
     const token = jwt.sign({ userId: user._id }, process.env.TOKEN_SECRET, {
@@ -35,8 +36,7 @@ exports.login = async (req, res, next) => {
     // return token payload
     return res.status(200).json({ token });
   } catch (err) {
-    console.log(err);
-    return res.status(500).json({ message: "server error" });
+    return next(err);
   }
 };
 
@@ -51,8 +51,7 @@ exports.getUser = async (req, res, next) => {
     // return user
     return res.status(200).json(user);
   } catch (err) {
-    console.log(err);
-    return res.status(500).json({ message: "server error" });
+    return next(err);
   }
 };
 

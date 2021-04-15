@@ -5,6 +5,7 @@ const dotenv = require("dotenv");
 
 const authRoutes = require("./routes/auth");
 const contactsRoutes = require("./routes/contacts");
+const errorHandler = require("./middleware/error");
 
 const mongoose = require("mongoose");
 
@@ -14,10 +15,6 @@ dotenv.config();
 if (!process.env.PORT) {
   process.exit(1);
 }
-
-const PORT = parseInt(process.env.PORT, 10);
-
-const url = `mongodb+srv://${process.env.DATABASE_USER}:${process.env.DATABASE_PASSWORD}@react-contact-cluster.giffr.mongodb.net/${process.env.DATABASE_NAME}?retryWrites=true&w=majority`;
 
 const app = express();
 
@@ -31,6 +28,12 @@ app.use(express.json());
 // register routes
 app.use("/api/auth", authRoutes);
 app.use("/api/contacts", contactsRoutes);
+
+app.use(errorHandler); // error handler
+
+const url = `mongodb+srv://${process.env.DATABASE_USER}:${process.env.DATABASE_PASSWORD}@react-contact-cluster.giffr.mongodb.net/${process.env.DATABASE_NAME}?retryWrites=true&w=majority`;
+
+const PORT = parseInt(process.env.PORT, 10);
 
 // connect
 const connectDB = async () => {

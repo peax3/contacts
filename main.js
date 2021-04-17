@@ -28,8 +28,15 @@ app.use(cors());
 app.use(helmet());
 app.use(xss());
 
+// options for serving static file
+const options = {
+  setHeaders: function (res, path, stat) {
+    res.set("Content-Security-Policy", "script-src 'unsafe-inline'");
+  },
+};
+
 // set static folder
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public"), options));
 
 // register routes
 app.use("/api/auth", authRoutes);

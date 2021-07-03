@@ -48,8 +48,13 @@ exports.getUser = async (req, res, next) => {
   try {
     // find the user in the database
     const user = await User.findById(userId);
+
+    const userDetailsToReturn = {
+      fullName: user.fullName,
+      email: user.email,
+    };
     // return user
-    return res.status(200).json(user);
+    return res.status(200).json({ user: userDetailsToReturn });
   } catch (err) {
     return next();
   }

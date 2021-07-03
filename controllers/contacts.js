@@ -131,6 +131,7 @@ exports.updateContact = async (req, res, next) => {
       lastName,
       phone,
       email,
+      fullName: `${firstName} ${lastName}`,
     };
 
     if (req.file) {
